@@ -65,6 +65,8 @@ func main() {
 
 The same code is in `example_test.go`, so `make test` checks that it compiles.
 
+The full API is in the [Go reference](https://pkg.go.dev/github.com/psyb0t/go-morphik); from inside your module, `go doc github.com/psyb0t/go-morphik` prints the same.
+
 Method names come from the spec's operation IDs, such as `GetAvailableModelsModelsGetWithResponse`, `ListDocsDocumentsPostWithResponse` and `RetrieveDocumentsRetrieveDocsPostWithResponse`. The client covers all 67 operations across 58 paths, including ingestion, documents, retrieval, queries, models, cloud apps and connectors.
 
 ## Auth

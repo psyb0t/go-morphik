@@ -1,0 +1,17 @@
+{
+  "name": "go-morphik",
+  "description": "Unofficial Go client for the Morphik API: ingestion, documents, retrieval, queries, models, cloud apps and connectors, generated from Morphik's published spec.",
+  "author": {
+    "name": "psyb0t",
+    "url": "https://github.com/psyb0t"
+  },
+  "homepage": "https://github.com/psyb0t/go-morphik",
+  "license": "MIT",
+  "keywords": [
+    "morphik",
+    "retrieval",
+    "api-client",
+    "go-library",
+    "openapi"
+  ]
+}

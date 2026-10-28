@@ -40,7 +40,7 @@ The public spec has no `servers` or `securitySchemes` entries. It exposes option
 | `SearchDocumentsByNameSearchDocumentsPostWithResponse` | `POST /search/documents` |
 | `HealthCheckHealthGetWithResponse` | `GET /health` |
 
-The full client preserves all 67 operations across 58 paths, including ingestion uploads, document summaries, collection routes under `/folders`, models, API keys, logs, usage, connectors, cloud apps and chats. Request bodies include `IngestTextRequest`, `ListDocsRequest`, `RetrieveRequest` and `CompletionQueryRequest`.
+The full client preserves all 72 operations across 63 paths, including ingestion uploads, document summaries, collection routes under `/folders`, models, API keys, logs, usage, connectors, cloud apps and chats. Request bodies include `IngestTextRequest`, `ListDocsRequest`, `RetrieveRequest` and `CompletionQueryRequest`.
 
 ## Responses
 

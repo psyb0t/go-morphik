@@ -1,6 +1,6 @@
 {
   "name": "go-morphik",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Unofficial Go client for the Morphik API: ingestion, documents, retrieval, queries, models, cloud apps and connectors, generated from Morphik's published spec.",
   "author": {
     "name": "psyb0t",

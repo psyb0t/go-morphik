@@ -67,7 +67,7 @@ The same code is in `example_test.go`, so `make test` checks that it compiles.
 
 The full API is in the [Go reference](https://pkg.go.dev/github.com/psyb0t/go-morphik); from inside your module, `go doc github.com/psyb0t/go-morphik` prints the same.
 
-Method names come from the spec's operation IDs, such as `GetAvailableModelsModelsGetWithResponse`, `ListDocsDocumentsPostWithResponse` and `RetrieveDocumentsRetrieveDocsPostWithResponse`. The client covers all 67 operations across 58 paths, including ingestion, documents, retrieval, queries, models, cloud apps and connectors.
+Method names come from the spec's operation IDs, such as `GetAvailableModelsModelsGetWithResponse`, `ListDocsDocumentsPostWithResponse` and `RetrieveDocumentsRetrieveDocsPostWithResponse`. The client covers all 72 operations across 63 paths, including ingestion, documents, retrieval, queries, models, cloud apps and connectors.
 
 ## Auth
 
@@ -85,7 +85,7 @@ make generate
 
 `gen.go` declares the steps, so `make generate` is just `go generate ./...`:
 
-- `scripts/fetch-spec.sh` reads `openapi_spec_url` from [morphik-org/morphik-ts/.stats.yml](https://raw.githubusercontent.com/morphik-org/morphik-ts/main/.stats.yml), then downloads that Stainless-hosted spec to `api/openapi.yaml`. The content-hashed URL changes when Morphik updates it. The file contains JSON despite its `.yaml` suffix.
+- `scripts/fetch-spec.sh` downloads the spec the Morphik API serves at `https://api.morphik.ai/openapi.json` to `api/openapi.yaml`. The file contains JSON despite its `.yaml` suffix.
 - `scripts/patch-spec.sh` writes `api/openapi.fixed.yaml`, converting OpenAPI 3.1 nullable unions and numeric exclusive bounds into OpenAPI 3.0 form for oapi-codegen.
 - oapi-codegen runs with `config.yaml`, preserving every operation and mapping `number` to `float64` instead of its default `float32`.
 

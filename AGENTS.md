@@ -6,7 +6,7 @@ Unofficial Go client for the Morphik API, generated from the OpenAPI document Mo
 
 One generated package, `morphik`, at the module root, driven by `gen.go`:
 
-`scripts/fetch-spec.sh` reads `openapi_spec_url` from `https://raw.githubusercontent.com/morphik-org/morphik-ts/main/.stats.yml`, then downloads the Stainless-hosted JSON document to `api/openapi.yaml` → `scripts/patch-spec.sh` writes `api/openapi.fixed.yaml` in OpenAPI 3.0 form → oapi-codegen with `config.yaml` → `client.gen.go`.
+`scripts/fetch-spec.sh` downloads the JSON document the Morphik API serves at `https://api.morphik.ai/openapi.json` to `api/openapi.yaml` → `scripts/patch-spec.sh` writes `api/openapi.fixed.yaml` in OpenAPI 3.0 form → oapi-codegen with `config.yaml` → `client.gen.go`.
 
 ## Stack
 
@@ -37,10 +37,10 @@ make sec       # gitleaks, govulncheck, semgrep
 ## Project-specific landmines
 
 - The vendor spec is OpenAPI 3.1.0. `patch-spec.sh` converts nullable `anyOf` unions and numeric exclusive bounds into OpenAPI 3.0 forms before generation.
-- The `.yaml` download is JSON. Use jq for patches. Resolve the current Stainless content hash through the SDK's `.stats.yml` each time.
+- The `.yaml` download is JSON. Use jq for patches.
 - The spec has no server or security scheme. The vendor SDK supplies the default `https://api.morphik.ai` and bearer auth. Use a request editor for `Authorization`; optional generated header parameters do not authenticate automatically.
 - Without the `number` to `float64` mapping in `config.yaml`, numeric fields become `float32`.
-- Method names follow long FastAPI operation IDs, for example `GetAvailableModelsModelsGet` and `ListDocsDocumentsPost`. Preserve all 67 operations, including aliases and connector routes.
+- Method names follow long FastAPI operation IDs, for example `GetAvailableModelsModelsGet` and `ListDocsDocumentsPost`. Preserve all 72 operations, including aliases, v2 routes and connector routes.
 - Multipart file operations need callers to construct the body and content type for the generated `WithBody` methods. This REST client does not implement a streaming event decoder.
 - `make generate` always downloads the current spec, so it can change the client even when nothing here changed. Review the generated diff before committing it.
 - `.github/workflows/regen.yml` regenerates the client every day and releases the result. When the checks fail, Claude edits the repository to fix them, but a fix may not touch the paths listed under `fix_protected_paths` in that workflow: the workflows, the Makefile, `AGENTS.md`, `.agents/rules/`, the lint, security and spec download scripts and their configs. A problem that needs a change there fails the run and needs a manual fix.

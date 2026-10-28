@@ -18,6 +18,24 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for BodyMigrateDocumentMigrateDocumentPostOnConflict.
+const (
+	BodyMigrateDocumentMigrateDocumentPostOnConflictFail BodyMigrateDocumentMigrateDocumentPostOnConflict = "fail"
+	BodyMigrateDocumentMigrateDocumentPostOnConflictSkip BodyMigrateDocumentMigrateDocumentPostOnConflict = "skip"
+)
+
+// Valid indicates whether the value is a known member of the BodyMigrateDocumentMigrateDocumentPostOnConflict enum.
+func (e BodyMigrateDocumentMigrateDocumentPostOnConflict) Valid() bool {
+	switch e {
+	case BodyMigrateDocumentMigrateDocumentPostOnConflictFail:
+		return true
+	case BodyMigrateDocumentMigrateDocumentPostOnConflictSkip:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ChatMessageRole.
 const (
 	ChatMessageRoleAssistant ChatMessageRole = "assistant"
@@ -156,6 +174,24 @@ func (e ListDocsRequestSortDirection) Valid() bool {
 	}
 }
 
+// Defines values for MigrationIngestResponseStatus.
+const (
+	MigrationIngestResponseStatusCreated MigrationIngestResponseStatus = "created"
+	MigrationIngestResponseStatusSkipped MigrationIngestResponseStatus = "skipped"
+)
+
+// Valid indicates whether the value is a known member of the MigrationIngestResponseStatus enum.
+func (e MigrationIngestResponseStatus) Valid() bool {
+	switch e {
+	case MigrationIngestResponseStatusCreated:
+		return true
+	case MigrationIngestResponseStatusSkipped:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for OutputFormat.
 const (
 	OutputFormatBase64 OutputFormat = "base64"
@@ -255,6 +291,17 @@ type BodyBatchIngestFilesIngestFilesPost struct {
 	UseColpali    *bool                `json:"use_colpali,omitempty"`
 }
 
+// BodyIngestDocumentV2V2DocumentsPost defines model for Body_ingest_document_v2_v2_documents_post.
+type BodyIngestDocumentV2V2DocumentsPost struct {
+	Content       *string             `json:"content,omitempty"`
+	EndUserId     *string             `json:"end_user_id,omitempty"`
+	File          *openapi_types.File `json:"file,omitempty"`
+	Filename      *string             `json:"filename,omitempty"`
+	FolderPath    *string             `json:"folder_path,omitempty"`
+	Metadata      *string             `json:"metadata,omitempty"`
+	MetadataTypes *string             `json:"metadata_types,omitempty"`
+}
+
 // BodyIngestFileIngestFilePost defines model for Body_ingest_file_ingest_file_post.
 type BodyIngestFileIngestFilePost struct {
 	EndUserId     *string            `json:"end_user_id,omitempty"`
@@ -264,6 +311,21 @@ type BodyIngestFileIngestFilePost struct {
 	MetadataTypes *string            `json:"metadata_types,omitempty"`
 	UseColpali    *bool              `json:"use_colpali,omitempty"`
 }
+
+// BodyMigrateDocumentMigrateDocumentPost defines model for Body_migrate_document_migrate_document_post.
+type BodyMigrateDocumentMigrateDocumentPost struct {
+	EndUserId        *string                                           `json:"end_user_id,omitempty"`
+	File             openapi_types.File                                `json:"file"`
+	FolderName       *string                                           `json:"folder_name,omitempty"`
+	Metadata         *string                                           `json:"metadata,omitempty"`
+	MetadataTypes    *string                                           `json:"metadata_types,omitempty"`
+	OnConflict       *BodyMigrateDocumentMigrateDocumentPostOnConflict `json:"on_conflict,omitempty"`
+	SourceDocumentId string                                            `json:"source_document_id"`
+	UseColpali       *bool                                             `json:"use_colpali,omitempty"`
+}
+
+// BodyMigrateDocumentMigrateDocumentPostOnConflict defines model for BodyMigrateDocumentMigrateDocumentPost.OnConflict.
+type BodyMigrateDocumentMigrateDocumentPostOnConflict string
 
 // BodyQueryDocumentIngestDocumentQueryPost defines model for Body_query_document_ingest_document_query_post.
 type BodyQueryDocumentIngestDocumentQueryPost struct {
@@ -823,6 +885,12 @@ type FolderDocumentInfo struct {
 	StatusCounts  *map[string]int `json:"status_counts,omitempty"`
 }
 
+// FolderMove Request model for moving/renaming a folder via a new path.
+type FolderMove struct {
+	// NewPath The new full path for the folder (e.g. '/NewParent/NewName')
+	NewPath string `json:"new_path"`
+}
+
 // FolderSummary defines model for FolderSummary.
 type FolderSummary struct {
 	Depth       *int    `json:"depth,omitempty"`
@@ -1037,6 +1105,16 @@ type MetadataUpdateRequest struct {
 	// MetadataTypes Optional per-field type hints: 'string', 'number', 'decimal', 'datetime', 'date', 'boolean', 'array', 'object'. Enables typed comparisons.
 	MetadataTypes *map[string]string `json:"metadata_types,omitempty"`
 }
+
+// MigrationIngestResponse Response for a migration document ingest request.
+type MigrationIngestResponse struct {
+	// Document Represents a document stored in the database documents collection
+	Document Document                      `json:"document"`
+	Status   MigrationIngestResponseStatus `json:"status"`
+}
+
+// MigrationIngestResponseStatus defines model for MigrationIngestResponse.Status.
+type MigrationIngestResponseStatus string
 
 // ModelResponse Response for a saved model.
 type ModelResponse struct {
@@ -1287,6 +1365,51 @@ type SummaryUpsertRequest struct {
 
 	// Versioning When true, automatically increments the summary version instead of overwriting the latest version
 	Versioning *bool `json:"versioning,omitempty"`
+}
+
+// V2ChunkResult defines model for V2ChunkResult.
+type V2ChunkResult struct {
+	ChunkId     string  `json:"chunk_id"`
+	ChunkNumber *int    `json:"chunk_number,omitempty"`
+	Content     string  `json:"content"`
+	DocumentId  string  `json:"document_id"`
+	PageNumber  *int    `json:"page_number,omitempty"`
+	Score       float64 `json:"score"`
+}
+
+// V2IngestResponse defines model for V2IngestResponse.
+type V2IngestResponse struct {
+	ChunkCount int     `json:"chunk_count"`
+	DocumentId string  `json:"document_id"`
+	Filename   string  `json:"filename"`
+	Status     *string `json:"status,omitempty"`
+}
+
+// V2RetrieveFilters defines model for V2RetrieveFilters.
+type V2RetrieveFilters struct {
+	// DocumentIds Limit to specific document IDs
+	DocumentIds *[]string `json:"document_ids,omitempty"`
+
+	// FolderPaths Limit to specific folder paths
+	FolderPaths *[]string `json:"folder_paths,omitempty"`
+
+	// Metadata Chunk-level metadata filters
+	Metadata *map[string]interface{} `json:"metadata,omitempty"`
+}
+
+// V2RetrieveRequest defines model for V2RetrieveRequest.
+type V2RetrieveRequest struct {
+	// EndUserId Optional end-user scope
+	EndUserId *string            `json:"end_user_id,omitempty"`
+	Filters   *V2RetrieveFilters `json:"filters,omitempty"`
+	Query     string             `json:"query"`
+	TopK      *int               `json:"top_k,omitempty"`
+}
+
+// V2RetrieveResponse defines model for V2RetrieveResponse.
+type V2RetrieveResponse struct {
+	Chunks []V2ChunkResult `json:"chunks"`
+	Query  string          `json:"query"`
 }
 
 // ValidationError defines model for ValidationError.
@@ -1631,6 +1754,11 @@ type AddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPostParams struc
 	Authorization *string `json:"authorization,omitempty"`
 }
 
+// MoveFolderFoldersFolderIdOrNameMovePostParams defines parameters for MoveFolderFoldersFolderIdOrNameMovePost.
+type MoveFolderFoldersFolderIdOrNameMovePostParams struct {
+	Authorization *string `json:"authorization,omitempty"`
+}
+
 // GetFolderSummaryFoldersFolderIdOrNameSummaryGetParams defines parameters for GetFolderSummaryFoldersFolderIdOrNameSummaryGet.
 type GetFolderSummaryFoldersFolderIdOrNameSummaryGetParams struct {
 	Authorization *string `json:"authorization,omitempty"`
@@ -1673,6 +1801,11 @@ type GetLogsLogsGetParams struct {
 	OpType        *string  `form:"op_type,omitempty" json:"op_type,omitempty"`
 	Status        *string  `form:"status,omitempty" json:"status,omitempty"`
 	Authorization *string  `json:"authorization,omitempty"`
+}
+
+// MigrateDocumentMigrateDocumentPostParams defines parameters for MigrateDocumentMigrateDocumentPost.
+type MigrateDocumentMigrateDocumentPostParams struct {
+	Authorization *string `json:"authorization,omitempty"`
 }
 
 // GetAvailableModelsModelsGetParams defines parameters for GetAvailableModelsModelsGet.
@@ -1727,6 +1860,21 @@ type SearchDocumentsByNameSearchDocumentsPostParams struct {
 
 // GetAppStorageUsageUsageAppStorageGetParams defines parameters for GetAppStorageUsageUsageAppStorageGet.
 type GetAppStorageUsageUsageAppStorageGetParams struct {
+	Authorization *string `json:"authorization,omitempty"`
+}
+
+// IngestDocumentV2V2DocumentsPostParams defines parameters for IngestDocumentV2V2DocumentsPost.
+type IngestDocumentV2V2DocumentsPostParams struct {
+	Authorization *string `json:"authorization,omitempty"`
+}
+
+// DeleteDocumentV2V2DocumentsDocumentIdDeleteParams defines parameters for DeleteDocumentV2V2DocumentsDocumentIdDelete.
+type DeleteDocumentV2V2DocumentsDocumentIdDeleteParams struct {
+	Authorization *string `json:"authorization,omitempty"`
+}
+
+// RetrieveChunksV2V2RetrieveChunksPostParams defines parameters for RetrieveChunksV2V2RetrieveChunksPost.
+type RetrieveChunksV2V2RetrieveChunksPostParams struct {
 	Authorization *string `json:"authorization,omitempty"`
 }
 
@@ -1793,6 +1941,9 @@ type CreateFolderFoldersPostJSONRequestBody = FolderCreate
 // FolderDetailsFoldersDetailsPostJSONRequestBody defines body for FolderDetailsFoldersDetailsPost for application/json ContentType.
 type FolderDetailsFoldersDetailsPostJSONRequestBody = FolderDetailsRequest
 
+// MoveFolderFoldersFolderIdOrNameMovePostJSONRequestBody defines body for MoveFolderFoldersFolderIdOrNameMovePost for application/json ContentType.
+type MoveFolderFoldersFolderIdOrNameMovePostJSONRequestBody = FolderMove
+
 // UpsertFolderSummaryFoldersFolderIdOrNameSummaryPutJSONRequestBody defines body for UpsertFolderSummaryFoldersFolderIdOrNameSummaryPut for application/json ContentType.
 type UpsertFolderSummaryFoldersFolderIdOrNameSummaryPutJSONRequestBody = SummaryUpsertRequest
 
@@ -1811,6 +1962,9 @@ type RequeueIngestJobsIngestRequeuePostJSONRequestBody = RequeueIngestionRequest
 // IngestTextIngestTextPostJSONRequestBody defines body for IngestTextIngestTextPost for application/json ContentType.
 type IngestTextIngestTextPostJSONRequestBody = IngestTextRequest
 
+// MigrateDocumentMigrateDocumentPostMultipartRequestBody defines body for MigrateDocumentMigrateDocumentPost for multipart/form-data ContentType.
+type MigrateDocumentMigrateDocumentPostMultipartRequestBody = BodyMigrateDocumentMigrateDocumentPost
+
 // SaveModelModelsPostJSONRequestBody defines body for SaveModelModelsPost for application/json ContentType.
 type SaveModelModelsPostJSONRequestBody = SaveModelRequest
 
@@ -1828,6 +1982,12 @@ type RetrieveDocumentsRetrieveDocsPostJSONRequestBody = RetrieveRequest
 
 // SearchDocumentsByNameSearchDocumentsPostJSONRequestBody defines body for SearchDocumentsByNameSearchDocumentsPost for application/json ContentType.
 type SearchDocumentsByNameSearchDocumentsPostJSONRequestBody = SearchDocumentsRequest
+
+// IngestDocumentV2V2DocumentsPostMultipartRequestBody defines body for IngestDocumentV2V2DocumentsPost for multipart/form-data ContentType.
+type IngestDocumentV2V2DocumentsPostMultipartRequestBody = BodyIngestDocumentV2V2DocumentsPost
+
+// RetrieveChunksV2V2RetrieveChunksPostJSONRequestBody defines body for RetrieveChunksV2V2RetrieveChunksPost for application/json ContentType.
+type RetrieveChunksV2V2RetrieveChunksPostJSONRequestBody = V2RetrieveRequest
 
 // Getter for additional properties for ConnectorIngestRequest. Returns the specified
 // element and whether it was found
@@ -3369,6 +3529,34 @@ type ClientInterface interface {
 	// Corresponds with POST /folders/{folder_id_or_name}/documents/{document_id} (the `AddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPost` operationId).
 	AddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPost(ctx context.Context, folderIdOrName string, documentId string, params *AddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPostParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// MoveFolderFoldersFolderIdOrNameMovePostWithBody Move Folder
+	//
+	// Move and/or rename a folder by providing a new path.
+	//
+	// - Changing the last segment renames the folder.
+	// - Changing parent segments moves it.
+	// - All descendant folders and documents are updated atomically.
+	// - Missing ancestor folders at the new location are created automatically.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /folders/{folder_id_or_name}/move (the `MoveFolderFoldersFolderIdOrNameMovePost` operationId).
+	MoveFolderFoldersFolderIdOrNameMovePostWithBody(ctx context.Context, folderIdOrName string, params *MoveFolderFoldersFolderIdOrNameMovePostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// MoveFolderFoldersFolderIdOrNameMovePost Move Folder
+	//
+	// Move and/or rename a folder by providing a new path.
+	//
+	// - Changing the last segment renames the folder.
+	// - Changing parent segments moves it.
+	// - All descendant folders and documents are updated atomically.
+	// - Missing ancestor folders at the new location are created automatically.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /folders/{folder_id_or_name}/move (the `MoveFolderFoldersFolderIdOrNameMovePost` operationId).
+	MoveFolderFoldersFolderIdOrNameMovePost(ctx context.Context, folderIdOrName string, params *MoveFolderFoldersFolderIdOrNameMovePostParams, body MoveFolderFoldersFolderIdOrNameMovePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetFolderSummaryFoldersFolderIdOrNameSummaryGet Get Folder Summary
 	//
 	// Retrieve the latest summary for a folder.
@@ -3495,6 +3683,15 @@ type ClientInterface interface {
 	//
 	// Corresponds with GET /logs/ (the `GetLogsLogsGet` operationId).
 	GetLogsLogsGet(ctx context.Context, params *GetLogsLogsGetParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// MigrateDocumentMigrateDocumentPostWithBody Migrate Document
+	//
+	// Ingest a migrated source document while preserving its document ID.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /migrate/document (the `MigrateDocumentMigrateDocumentPost` operationId).
+	MigrateDocumentMigrateDocumentPostWithBody(ctx context.Context, params *MigrateDocumentMigrateDocumentPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetAvailableModelsModelsGet Get Available Models
 	//
@@ -3723,6 +3920,32 @@ type ClientInterface interface {
 	//
 	// Corresponds with GET /usage/app-storage (the `GetAppStorageUsageUsageAppStorageGet` operationId).
 	GetAppStorageUsageUsageAppStorageGet(ctx context.Context, params *GetAppStorageUsageUsageAppStorageGetParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// IngestDocumentV2V2DocumentsPostWithBody Ingest Document V2
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /v2/documents (the `IngestDocumentV2V2DocumentsPost` operationId).
+	IngestDocumentV2V2DocumentsPostWithBody(ctx context.Context, params *IngestDocumentV2V2DocumentsPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteDocumentV2V2DocumentsDocumentIdDelete Delete Document V2
+	//
+	// Corresponds with DELETE /v2/documents/{document_id} (the `DeleteDocumentV2V2DocumentsDocumentIdDelete` operationId).
+	DeleteDocumentV2V2DocumentsDocumentIdDelete(ctx context.Context, documentId string, params *DeleteDocumentV2V2DocumentsDocumentIdDeleteParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RetrieveChunksV2V2RetrieveChunksPostWithBody Retrieve Chunks V2
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /v2/retrieve/chunks (the `RetrieveChunksV2V2RetrieveChunksPost` operationId).
+	RetrieveChunksV2V2RetrieveChunksPostWithBody(ctx context.Context, params *RetrieveChunksV2V2RetrieveChunksPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RetrieveChunksV2V2RetrieveChunksPost Retrieve Chunks V2
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /v2/retrieve/chunks (the `RetrieveChunksV2V2RetrieveChunksPost` operationId).
+	RetrieveChunksV2V2RetrieveChunksPost(ctx context.Context, params *RetrieveChunksV2V2RetrieveChunksPostParams, body RetrieveChunksV2V2RetrieveChunksPostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // ListApiKeysApiKeysGet List Api Keys
@@ -5041,6 +5264,54 @@ func (c *Client) AddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPost
 	return c.Client.Do(req)
 }
 
+// MoveFolderFoldersFolderIdOrNameMovePostWithBody Move Folder
+//
+// Move and/or rename a folder by providing a new path.
+//
+// - Changing the last segment renames the folder.
+// - Changing parent segments moves it.
+// - All descendant folders and documents are updated atomically.
+// - Missing ancestor folders at the new location are created automatically.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /folders/{folder_id_or_name}/move (the `MoveFolderFoldersFolderIdOrNameMovePost` operationId).
+func (c *Client) MoveFolderFoldersFolderIdOrNameMovePostWithBody(ctx context.Context, folderIdOrName string, params *MoveFolderFoldersFolderIdOrNameMovePostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewMoveFolderFoldersFolderIdOrNameMovePostRequestWithBody(c.Server, folderIdOrName, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// MoveFolderFoldersFolderIdOrNameMovePost Move Folder
+//
+// Move and/or rename a folder by providing a new path.
+//
+// - Changing the last segment renames the folder.
+// - Changing parent segments moves it.
+// - All descendant folders and documents are updated atomically.
+// - Missing ancestor folders at the new location are created automatically.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /folders/{folder_id_or_name}/move (the `MoveFolderFoldersFolderIdOrNameMovePost` operationId).
+func (c *Client) MoveFolderFoldersFolderIdOrNameMovePost(ctx context.Context, folderIdOrName string, params *MoveFolderFoldersFolderIdOrNameMovePostParams, body MoveFolderFoldersFolderIdOrNameMovePostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewMoveFolderFoldersFolderIdOrNameMovePostRequest(c.Server, folderIdOrName, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // GetFolderSummaryFoldersFolderIdOrNameSummaryGet Get Folder Summary
 //
 // Retrieve the latest summary for a folder.
@@ -5279,6 +5550,25 @@ func (c *Client) IngestTextIngestTextPost(ctx context.Context, params *IngestTex
 // Corresponds with GET /logs/ (the `GetLogsLogsGet` operationId).
 func (c *Client) GetLogsLogsGet(ctx context.Context, params *GetLogsLogsGetParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetLogsLogsGetRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// MigrateDocumentMigrateDocumentPostWithBody Migrate Document
+//
+// Ingest a migrated source document while preserving its document ID.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /migrate/document (the `MigrateDocumentMigrateDocumentPost` operationId).
+func (c *Client) MigrateDocumentMigrateDocumentPostWithBody(ctx context.Context, params *MigrateDocumentMigrateDocumentPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewMigrateDocumentMigrateDocumentPostRequestWithBody(c.Server, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -5691,6 +5981,72 @@ func (c *Client) SearchDocumentsByNameSearchDocumentsPost(ctx context.Context, p
 // Corresponds with GET /usage/app-storage (the `GetAppStorageUsageUsageAppStorageGet` operationId).
 func (c *Client) GetAppStorageUsageUsageAppStorageGet(ctx context.Context, params *GetAppStorageUsageUsageAppStorageGetParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetAppStorageUsageUsageAppStorageGetRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// IngestDocumentV2V2DocumentsPostWithBody Ingest Document V2
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /v2/documents (the `IngestDocumentV2V2DocumentsPost` operationId).
+func (c *Client) IngestDocumentV2V2DocumentsPostWithBody(ctx context.Context, params *IngestDocumentV2V2DocumentsPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewIngestDocumentV2V2DocumentsPostRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteDocumentV2V2DocumentsDocumentIdDelete Delete Document V2
+//
+// Corresponds with DELETE /v2/documents/{document_id} (the `DeleteDocumentV2V2DocumentsDocumentIdDelete` operationId).
+func (c *Client) DeleteDocumentV2V2DocumentsDocumentIdDelete(ctx context.Context, documentId string, params *DeleteDocumentV2V2DocumentsDocumentIdDeleteParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteDocumentV2V2DocumentsDocumentIdDeleteRequest(c.Server, documentId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RetrieveChunksV2V2RetrieveChunksPostWithBody Retrieve Chunks V2
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /v2/retrieve/chunks (the `RetrieveChunksV2V2RetrieveChunksPost` operationId).
+func (c *Client) RetrieveChunksV2V2RetrieveChunksPostWithBody(ctx context.Context, params *RetrieveChunksV2V2RetrieveChunksPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRetrieveChunksV2V2RetrieveChunksPostRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RetrieveChunksV2V2RetrieveChunksPost Retrieve Chunks V2
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /v2/retrieve/chunks (the `RetrieveChunksV2V2RetrieveChunksPost` operationId).
+func (c *Client) RetrieveChunksV2V2RetrieveChunksPost(ctx context.Context, params *RetrieveChunksV2V2RetrieveChunksPostParams, body RetrieveChunksV2V2RetrieveChunksPostJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRetrieveChunksV2V2RetrieveChunksPostRequest(c.Server, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -8735,6 +9091,68 @@ func NewAddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPostRequest(s
 	return req, nil
 }
 
+// NewMoveFolderFoldersFolderIdOrNameMovePostRequest calls the generic MoveFolderFoldersFolderIdOrNameMovePost builder with application/json body
+func NewMoveFolderFoldersFolderIdOrNameMovePostRequest(server string, folderIdOrName string, params *MoveFolderFoldersFolderIdOrNameMovePostParams, body MoveFolderFoldersFolderIdOrNameMovePostJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewMoveFolderFoldersFolderIdOrNameMovePostRequestWithBody(server, folderIdOrName, params, "application/json", bodyReader)
+}
+
+// NewMoveFolderFoldersFolderIdOrNameMovePostRequestWithBody constructs an http.Request for the MoveFolderFoldersFolderIdOrNameMovePost method, with any body, and a specified content type
+func NewMoveFolderFoldersFolderIdOrNameMovePostRequestWithBody(server string, folderIdOrName string, params *MoveFolderFoldersFolderIdOrNameMovePostParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "folder_id_or_name", folderIdOrName, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/folders/%s/move", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.Authorization != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "authorization", *params.Authorization, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("authorization", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
 // NewGetFolderSummaryFoldersFolderIdOrNameSummaryGetRequest constructs an http.Request for the GetFolderSummaryFoldersFolderIdOrNameSummaryGet method
 func NewGetFolderSummaryFoldersFolderIdOrNameSummaryGetRequest(server string, folderIdOrName string, params *GetFolderSummaryFoldersFolderIdOrNameSummaryGetParams) (*http.Request, error) {
 	var err error
@@ -9201,6 +9619,50 @@ func NewGetLogsLogsGetRequest(server string, params *GetLogsLogsGetParams) (*htt
 	if err != nil {
 		return nil, err
 	}
+
+	if params != nil {
+
+		if params.Authorization != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "authorization", *params.Authorization, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("authorization", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewMigrateDocumentMigrateDocumentPostRequestWithBody constructs an http.Request for the MigrateDocumentMigrateDocumentPost method, with any body, and a specified content type
+func NewMigrateDocumentMigrateDocumentPostRequestWithBody(server string, params *MigrateDocumentMigrateDocumentPostParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/migrate/document")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	if params != nil {
 
@@ -9775,6 +10237,154 @@ func NewGetAppStorageUsageUsageAppStorageGetRequest(server string, params *GetAp
 	if err != nil {
 		return nil, err
 	}
+
+	if params != nil {
+
+		if params.Authorization != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "authorization", *params.Authorization, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("authorization", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewIngestDocumentV2V2DocumentsPostRequestWithBody constructs an http.Request for the IngestDocumentV2V2DocumentsPost method, with any body, and a specified content type
+func NewIngestDocumentV2V2DocumentsPostRequestWithBody(server string, params *IngestDocumentV2V2DocumentsPostParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/documents")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.Authorization != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "authorization", *params.Authorization, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("authorization", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteDocumentV2V2DocumentsDocumentIdDeleteRequest constructs an http.Request for the DeleteDocumentV2V2DocumentsDocumentIdDelete method
+func NewDeleteDocumentV2V2DocumentsDocumentIdDeleteRequest(server string, documentId string, params *DeleteDocumentV2V2DocumentsDocumentIdDeleteParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "document_id", documentId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/documents/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.Authorization != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "authorization", *params.Authorization, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("authorization", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewRetrieveChunksV2V2RetrieveChunksPostRequest calls the generic RetrieveChunksV2V2RetrieveChunksPost builder with application/json body
+func NewRetrieveChunksV2V2RetrieveChunksPostRequest(server string, params *RetrieveChunksV2V2RetrieveChunksPostParams, body RetrieveChunksV2V2RetrieveChunksPostJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewRetrieveChunksV2V2RetrieveChunksPostRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewRetrieveChunksV2V2RetrieveChunksPostRequestWithBody constructs an http.Request for the RetrieveChunksV2V2RetrieveChunksPost method, with any body, and a specified content type
+func NewRetrieveChunksV2V2RetrieveChunksPostRequestWithBody(server string, params *RetrieveChunksV2V2RetrieveChunksPostParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/retrieve/chunks")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	if params != nil {
 
@@ -10544,6 +11154,34 @@ type ClientWithResponsesInterface interface {
 	// Corresponds with POST /folders/{folder_id_or_name}/documents/{document_id} (the `AddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPost` operationId).
 	AddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPostWithResponse(ctx context.Context, folderIdOrName string, documentId string, params *AddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPostParams, reqEditors ...RequestEditorFn) (*AddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPostResponse, error)
 
+	// MoveFolderFoldersFolderIdOrNameMovePostWithBodyWithResponse Move Folder
+	//
+	// Move and/or rename a folder by providing a new path.
+	//
+	// - Changing the last segment renames the folder.
+	// - Changing parent segments moves it.
+	// - All descendant folders and documents are updated atomically.
+	// - Missing ancestor folders at the new location are created automatically.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /folders/{folder_id_or_name}/move (the `MoveFolderFoldersFolderIdOrNameMovePost` operationId).
+	MoveFolderFoldersFolderIdOrNameMovePostWithBodyWithResponse(ctx context.Context, folderIdOrName string, params *MoveFolderFoldersFolderIdOrNameMovePostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*MoveFolderFoldersFolderIdOrNameMovePostResponse, error)
+
+	// MoveFolderFoldersFolderIdOrNameMovePostWithResponse Move Folder
+	//
+	// Move and/or rename a folder by providing a new path.
+	//
+	// - Changing the last segment renames the folder.
+	// - Changing parent segments moves it.
+	// - All descendant folders and documents are updated atomically.
+	// - Missing ancestor folders at the new location are created automatically.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /folders/{folder_id_or_name}/move (the `MoveFolderFoldersFolderIdOrNameMovePost` operationId).
+	MoveFolderFoldersFolderIdOrNameMovePostWithResponse(ctx context.Context, folderIdOrName string, params *MoveFolderFoldersFolderIdOrNameMovePostParams, body MoveFolderFoldersFolderIdOrNameMovePostJSONRequestBody, reqEditors ...RequestEditorFn) (*MoveFolderFoldersFolderIdOrNameMovePostResponse, error)
+
 	// GetFolderSummaryFoldersFolderIdOrNameSummaryGetWithResponse Get Folder Summary
 	//
 	// Retrieve the latest summary for a folder.
@@ -10676,6 +11314,15 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with GET /logs/ (the `GetLogsLogsGet` operationId).
 	GetLogsLogsGetWithResponse(ctx context.Context, params *GetLogsLogsGetParams, reqEditors ...RequestEditorFn) (*GetLogsLogsGetResponse, error)
+
+	// MigrateDocumentMigrateDocumentPostWithBodyWithResponse Migrate Document
+	//
+	// Ingest a migrated source document while preserving its document ID.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /migrate/document (the `MigrateDocumentMigrateDocumentPost` operationId).
+	MigrateDocumentMigrateDocumentPostWithBodyWithResponse(ctx context.Context, params *MigrateDocumentMigrateDocumentPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*MigrateDocumentMigrateDocumentPostResponse, error)
 
 	// GetAvailableModelsModelsGetWithResponse Get Available Models
 	//
@@ -10916,6 +11563,34 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with GET /usage/app-storage (the `GetAppStorageUsageUsageAppStorageGet` operationId).
 	GetAppStorageUsageUsageAppStorageGetWithResponse(ctx context.Context, params *GetAppStorageUsageUsageAppStorageGetParams, reqEditors ...RequestEditorFn) (*GetAppStorageUsageUsageAppStorageGetResponse, error)
+
+	// IngestDocumentV2V2DocumentsPostWithBodyWithResponse Ingest Document V2
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /v2/documents (the `IngestDocumentV2V2DocumentsPost` operationId).
+	IngestDocumentV2V2DocumentsPostWithBodyWithResponse(ctx context.Context, params *IngestDocumentV2V2DocumentsPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*IngestDocumentV2V2DocumentsPostResponse, error)
+
+	// DeleteDocumentV2V2DocumentsDocumentIdDeleteWithResponse Delete Document V2
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /v2/documents/{document_id} (the `DeleteDocumentV2V2DocumentsDocumentIdDelete` operationId).
+	DeleteDocumentV2V2DocumentsDocumentIdDeleteWithResponse(ctx context.Context, documentId string, params *DeleteDocumentV2V2DocumentsDocumentIdDeleteParams, reqEditors ...RequestEditorFn) (*DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse, error)
+
+	// RetrieveChunksV2V2RetrieveChunksPostWithBodyWithResponse Retrieve Chunks V2
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /v2/retrieve/chunks (the `RetrieveChunksV2V2RetrieveChunksPost` operationId).
+	RetrieveChunksV2V2RetrieveChunksPostWithBodyWithResponse(ctx context.Context, params *RetrieveChunksV2V2RetrieveChunksPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RetrieveChunksV2V2RetrieveChunksPostResponse, error)
+
+	// RetrieveChunksV2V2RetrieveChunksPostWithResponse Retrieve Chunks V2
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /v2/retrieve/chunks (the `RetrieveChunksV2V2RetrieveChunksPost` operationId).
+	RetrieveChunksV2V2RetrieveChunksPostWithResponse(ctx context.Context, params *RetrieveChunksV2V2RetrieveChunksPostParams, body RetrieveChunksV2V2RetrieveChunksPostJSONRequestBody, reqEditors ...RequestEditorFn) (*RetrieveChunksV2V2RetrieveChunksPostResponse, error)
 }
 
 type ListApiKeysApiKeysGetResponse struct {
@@ -13126,6 +13801,54 @@ func (r AddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPostResponse)
 	return ""
 }
 
+type MoveFolderFoldersFolderIdOrNameMovePostResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Folder
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *HTTPValidationError
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r MoveFolderFoldersFolderIdOrNameMovePostResponse) GetJSON200() *Folder {
+	return r.JSON200
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r MoveFolderFoldersFolderIdOrNameMovePostResponse) GetJSON422() *HTTPValidationError {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r MoveFolderFoldersFolderIdOrNameMovePostResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r MoveFolderFoldersFolderIdOrNameMovePostResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r MoveFolderFoldersFolderIdOrNameMovePostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r MoveFolderFoldersFolderIdOrNameMovePostResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 type GetFolderSummaryFoldersFolderIdOrNameSummaryGetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -13545,6 +14268,54 @@ func (r GetLogsLogsGetResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetLogsLogsGetResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type MigrateDocumentMigrateDocumentPostResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *MigrationIngestResponse
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *HTTPValidationError
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r MigrateDocumentMigrateDocumentPostResponse) GetJSON200() *MigrationIngestResponse {
+	return r.JSON200
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r MigrateDocumentMigrateDocumentPostResponse) GetJSON422() *HTTPValidationError {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r MigrateDocumentMigrateDocumentPostResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r MigrateDocumentMigrateDocumentPostResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r MigrateDocumentMigrateDocumentPostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r MigrateDocumentMigrateDocumentPostResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -14114,6 +14885,150 @@ func (r GetAppStorageUsageUsageAppStorageGetResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r GetAppStorageUsageUsageAppStorageGetResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type IngestDocumentV2V2DocumentsPostResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *V2IngestResponse
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *HTTPValidationError
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r IngestDocumentV2V2DocumentsPostResponse) GetJSON200() *V2IngestResponse {
+	return r.JSON200
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r IngestDocumentV2V2DocumentsPostResponse) GetJSON422() *HTTPValidationError {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r IngestDocumentV2V2DocumentsPostResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r IngestDocumentV2V2DocumentsPostResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r IngestDocumentV2V2DocumentsPostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r IngestDocumentV2V2DocumentsPostResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *DocumentDeleteResponse
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *HTTPValidationError
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse) GetJSON200() *DocumentDeleteResponse {
+	return r.JSON200
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse) GetJSON422() *HTTPValidationError {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+type RetrieveChunksV2V2RetrieveChunksPostResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *V2RetrieveResponse
+	// JSON422 the response for an HTTP 422 `application/json` response
+	JSON422 *HTTPValidationError
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r RetrieveChunksV2V2RetrieveChunksPostResponse) GetJSON200() *V2RetrieveResponse {
+	return r.JSON200
+}
+
+// GetJSON422 returns the response for an HTTP 422 `application/json` response
+func (r RetrieveChunksV2V2RetrieveChunksPostResponse) GetJSON422() *HTTPValidationError {
+	return r.JSON422
+}
+
+// GetBody returns the raw response body bytes
+func (r RetrieveChunksV2V2RetrieveChunksPostResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r RetrieveChunksV2V2RetrieveChunksPostResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RetrieveChunksV2V2RetrieveChunksPostResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RetrieveChunksV2V2RetrieveChunksPostResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -15222,6 +16137,46 @@ func (c *ClientWithResponses) AddDocumentToFolderFoldersFolderIdOrNameDocumentsD
 	return ParseAddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPostResponse(rsp)
 }
 
+// MoveFolderFoldersFolderIdOrNameMovePostWithBodyWithResponse Move Folder
+//
+// Move and/or rename a folder by providing a new path.
+//
+// - Changing the last segment renames the folder.
+// - Changing parent segments moves it.
+// - All descendant folders and documents are updated atomically.
+// - Missing ancestor folders at the new location are created automatically.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /folders/{folder_id_or_name}/move (the `MoveFolderFoldersFolderIdOrNameMovePost` operationId).
+func (c *ClientWithResponses) MoveFolderFoldersFolderIdOrNameMovePostWithBodyWithResponse(ctx context.Context, folderIdOrName string, params *MoveFolderFoldersFolderIdOrNameMovePostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*MoveFolderFoldersFolderIdOrNameMovePostResponse, error) {
+	rsp, err := c.MoveFolderFoldersFolderIdOrNameMovePostWithBody(ctx, folderIdOrName, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseMoveFolderFoldersFolderIdOrNameMovePostResponse(rsp)
+}
+
+// MoveFolderFoldersFolderIdOrNameMovePostWithResponse Move Folder
+//
+// Move and/or rename a folder by providing a new path.
+//
+// - Changing the last segment renames the folder.
+// - Changing parent segments moves it.
+// - All descendant folders and documents are updated atomically.
+// - Missing ancestor folders at the new location are created automatically.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /folders/{folder_id_or_name}/move (the `MoveFolderFoldersFolderIdOrNameMovePost` operationId).
+func (c *ClientWithResponses) MoveFolderFoldersFolderIdOrNameMovePostWithResponse(ctx context.Context, folderIdOrName string, params *MoveFolderFoldersFolderIdOrNameMovePostParams, body MoveFolderFoldersFolderIdOrNameMovePostJSONRequestBody, reqEditors ...RequestEditorFn) (*MoveFolderFoldersFolderIdOrNameMovePostResponse, error) {
+	rsp, err := c.MoveFolderFoldersFolderIdOrNameMovePost(ctx, folderIdOrName, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseMoveFolderFoldersFolderIdOrNameMovePostResponse(rsp)
+}
+
 // GetFolderSummaryFoldersFolderIdOrNameSummaryGetWithResponse Get Folder Summary
 //
 // Retrieve the latest summary for a folder.
@@ -15426,6 +16381,21 @@ func (c *ClientWithResponses) GetLogsLogsGetWithResponse(ctx context.Context, pa
 		return nil, err
 	}
 	return ParseGetLogsLogsGetResponse(rsp)
+}
+
+// MigrateDocumentMigrateDocumentPostWithBodyWithResponse Migrate Document
+//
+// Ingest a migrated source document while preserving its document ID.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /migrate/document (the `MigrateDocumentMigrateDocumentPost` operationId).
+func (c *ClientWithResponses) MigrateDocumentMigrateDocumentPostWithBodyWithResponse(ctx context.Context, params *MigrateDocumentMigrateDocumentPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*MigrateDocumentMigrateDocumentPostResponse, error) {
+	rsp, err := c.MigrateDocumentMigrateDocumentPostWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseMigrateDocumentMigrateDocumentPostResponse(rsp)
 }
 
 // GetAvailableModelsModelsGetWithResponse Get Available Models
@@ -15778,6 +16748,58 @@ func (c *ClientWithResponses) GetAppStorageUsageUsageAppStorageGetWithResponse(c
 		return nil, err
 	}
 	return ParseGetAppStorageUsageUsageAppStorageGetResponse(rsp)
+}
+
+// IngestDocumentV2V2DocumentsPostWithBodyWithResponse Ingest Document V2
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /v2/documents (the `IngestDocumentV2V2DocumentsPost` operationId).
+func (c *ClientWithResponses) IngestDocumentV2V2DocumentsPostWithBodyWithResponse(ctx context.Context, params *IngestDocumentV2V2DocumentsPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*IngestDocumentV2V2DocumentsPostResponse, error) {
+	rsp, err := c.IngestDocumentV2V2DocumentsPostWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseIngestDocumentV2V2DocumentsPostResponse(rsp)
+}
+
+// DeleteDocumentV2V2DocumentsDocumentIdDeleteWithResponse Delete Document V2
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /v2/documents/{document_id} (the `DeleteDocumentV2V2DocumentsDocumentIdDelete` operationId).
+func (c *ClientWithResponses) DeleteDocumentV2V2DocumentsDocumentIdDeleteWithResponse(ctx context.Context, documentId string, params *DeleteDocumentV2V2DocumentsDocumentIdDeleteParams, reqEditors ...RequestEditorFn) (*DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse, error) {
+	rsp, err := c.DeleteDocumentV2V2DocumentsDocumentIdDelete(ctx, documentId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteDocumentV2V2DocumentsDocumentIdDeleteResponse(rsp)
+}
+
+// RetrieveChunksV2V2RetrieveChunksPostWithBodyWithResponse Retrieve Chunks V2
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /v2/retrieve/chunks (the `RetrieveChunksV2V2RetrieveChunksPost` operationId).
+func (c *ClientWithResponses) RetrieveChunksV2V2RetrieveChunksPostWithBodyWithResponse(ctx context.Context, params *RetrieveChunksV2V2RetrieveChunksPostParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*RetrieveChunksV2V2RetrieveChunksPostResponse, error) {
+	rsp, err := c.RetrieveChunksV2V2RetrieveChunksPostWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRetrieveChunksV2V2RetrieveChunksPostResponse(rsp)
+}
+
+// RetrieveChunksV2V2RetrieveChunksPostWithResponse Retrieve Chunks V2
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /v2/retrieve/chunks (the `RetrieveChunksV2V2RetrieveChunksPost` operationId).
+func (c *ClientWithResponses) RetrieveChunksV2V2RetrieveChunksPostWithResponse(ctx context.Context, params *RetrieveChunksV2V2RetrieveChunksPostParams, body RetrieveChunksV2V2RetrieveChunksPostJSONRequestBody, reqEditors ...RequestEditorFn) (*RetrieveChunksV2V2RetrieveChunksPostResponse, error) {
+	rsp, err := c.RetrieveChunksV2V2RetrieveChunksPost(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRetrieveChunksV2V2RetrieveChunksPostResponse(rsp)
 }
 
 // ParseListApiKeysApiKeysGetResponse parses an HTTP response from a ListApiKeysApiKeysGetWithResponse call
@@ -17298,6 +18320,39 @@ func ParseAddDocumentToFolderFoldersFolderIdOrNameDocumentsDocumentIdPostRespons
 	return response, nil
 }
 
+// ParseMoveFolderFoldersFolderIdOrNameMovePostResponse parses an HTTP response from a MoveFolderFoldersFolderIdOrNameMovePostWithResponse call
+func ParseMoveFolderFoldersFolderIdOrNameMovePostResponse(rsp *http.Response) (*MoveFolderFoldersFolderIdOrNameMovePostResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &MoveFolderFoldersFolderIdOrNameMovePostResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Folder
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest HTTPValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetFolderSummaryFoldersFolderIdOrNameSummaryGetResponse parses an HTTP response from a GetFolderSummaryFoldersFolderIdOrNameSummaryGetWithResponse call
 func ParseGetFolderSummaryFoldersFolderIdOrNameSummaryGetResponse(rsp *http.Response) (*GetFolderSummaryFoldersFolderIdOrNameSummaryGetResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -17571,6 +18626,39 @@ func ParseGetLogsLogsGetResponse(rsp *http.Response) (*GetLogsLogsGetResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest []LogResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest HTTPValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseMigrateDocumentMigrateDocumentPostResponse parses an HTTP response from a MigrateDocumentMigrateDocumentPostWithResponse call
+func ParseMigrateDocumentMigrateDocumentPostResponse(rsp *http.Response) (*MigrateDocumentMigrateDocumentPostResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &MigrateDocumentMigrateDocumentPostResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest MigrationIngestResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -17960,6 +19048,105 @@ func ParseGetAppStorageUsageUsageAppStorageGetResponse(rsp *http.Response) (*Get
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest AppStorageUsageResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest HTTPValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseIngestDocumentV2V2DocumentsPostResponse parses an HTTP response from a IngestDocumentV2V2DocumentsPostWithResponse call
+func ParseIngestDocumentV2V2DocumentsPostResponse(rsp *http.Response) (*IngestDocumentV2V2DocumentsPostResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &IngestDocumentV2V2DocumentsPostResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest V2IngestResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest HTTPValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteDocumentV2V2DocumentsDocumentIdDeleteResponse parses an HTTP response from a DeleteDocumentV2V2DocumentsDocumentIdDeleteWithResponse call
+func ParseDeleteDocumentV2V2DocumentsDocumentIdDeleteResponse(rsp *http.Response) (*DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteDocumentV2V2DocumentsDocumentIdDeleteResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DocumentDeleteResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest HTTPValidationError
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON422 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseRetrieveChunksV2V2RetrieveChunksPostResponse parses an HTTP response from a RetrieveChunksV2V2RetrieveChunksPostWithResponse call
+func ParseRetrieveChunksV2V2RetrieveChunksPostResponse(rsp *http.Response) (*RetrieveChunksV2V2RetrieveChunksPostResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RetrieveChunksV2V2RetrieveChunksPostResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest V2RetrieveResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

@@ -2,6 +2,12 @@
 
 All notable changes per release. Versions follow [semver](https://semver.org).
 
+## v0.2.1, 2026-11-20
+
+- Raised the minimum Go version in `go.mod` from 1.26.10 to 1.26.11, which fixes the `net/http` crash GO-2026-6859 found by govulncheck.
+- The development image is based on `golang:1.26.11-trixie` with a new pinned digest.
+- Updated the Go version in the setup reference for the go-morphik skill. The exported API is unchanged.
+
 ## v0.2.0, 2026-10-28
 
 - The client is generated from the spec Morphik's API publishes at `https://api.morphik.ai/openapi.json`. The Stainless-hosted copy of the spec it used before is no longer publicly readable, so scheduled regeneration had stopped.
